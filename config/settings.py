@@ -45,11 +45,13 @@ INSTALLED_APPS = [
 # Project apps
 INSTALLED_APPS += [
     'api.utilis',
+    'api.v1.product',
+    'api.v1.user'
 ]
 
 # Third party apps
 INSTALLED_APPS += [
-    'corsheaders', 
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -143,7 +145,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR / 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR / 'static')
+STATIC_ROOT = os.path.join(BASE_DIR / 'staticfiles')
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR / 'media/')
@@ -154,10 +156,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # AUTH USER
-AUTH_USER_MODEL = 'utilis.User'
+AUTH_USER_MODEL = 'user.User'
 
 # CORS CONFIG
-if DEBUG:
+if not DEBUG:
     CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS").split(',')
     CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(',')
 
