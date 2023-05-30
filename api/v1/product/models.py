@@ -1,3 +1,51 @@
 from django.db import models
 
-# Create your models here.
+
+class Category(models.Model):
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    logo = models.ImageField()
+    title_uz = models.CharField(max_length=255)
+    title_ru = models.CharField(max_length=255)
+    description_uz = models.CharField(max_length=300, blank=True, null=True)
+    description_ru = models.CharField(max_length=300, blank=True, null=True)
+
+    def str(self) -> str:
+        return self.title
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+
+
+class Product(models.Model):
+    title_uz = models.CharField(max_length=255)
+    title_ru = models.CharField(max_length=255)
+    description_uz = models.TextField(blank=True, null=True)
+    description_ru = models.TextField(blank=True, null=True)
+    attributes = models.JSONField(blank=True, null=True, default=dict)
+
+    def str(self) -> str:
+        return self.title
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
+    img = models.ImageField()
+
+
+class Characteristic(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    title_uz = models.CharField(max_length=255)
+    title_ru = models.CharField(max_length=255)
+
+    def str(self) -> str:
+        return f"{self.product.title} - {self.title}"
+
+
+class CharacteristicItem(models.Model):
+    characteristic = models.ForeignKey(Characteristic, on_delete=models.SET_NULL, null=True)
+    title_uz = models.CharField(max_length=255)
+    title_ru = models.CharField(max_length=255)
+    value = models.CharField(max_length=255)
+
+    def str(self) -> str:
+        return self.title
