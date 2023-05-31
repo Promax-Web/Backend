@@ -1,5 +1,6 @@
 from django.db import models
 
+<<<<<<< HEAD
 
 class Category(models.Model):
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
@@ -49,3 +50,5 @@ class CharacteristicItem(models.Model):
 
     def str(self) -> str:
         return self.title
+=======
+>>>>>>> 2f6bf21 (...)
