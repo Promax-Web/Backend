@@ -15,5 +15,9 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ImgInline]
 
 
+@admin.register(Category)
+class CategorAdmin(admin.ModelAdmin):
+    list_display = ("id", 'title_uz', "title_ru", "parent")
+
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Category)
+# admin.site.register(Category)

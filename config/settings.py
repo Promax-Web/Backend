@@ -156,11 +156,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # AUTH USER
-<<<<<<< HEAD
 AUTH_USER_MODEL = 'user.User'
-=======
-# AUTH_USER_MODEL = 'utilis.User'
->>>>>>> 2f6bf21 (...)
 
 # CORS CONFIG
 if not DEBUG:
