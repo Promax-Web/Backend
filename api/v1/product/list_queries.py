@@ -7,16 +7,10 @@ def get_category_queryset():
     return Category.objects.select_related('parent').filter(parent__isnull=True)
 
 def get_list_categories(lang=None):
-    cache_key = 'category_data'
-    category_data = cache.get(cache_key)
-    if not category_data:
-        category_data = get_category_queryset()
-        cache.set(cache_key, category_data)
-
     if lang == None or lang =='uz':
-        serializer = CategoryUzSerializer(category_data, many=True)
+        serializer = CategoryUzSerializer(get_category_queryset(), many=True)
         return serializer.data
-    serializer = CategoryRuSerializer(category_data, many=True)
+    serializer = CategoryRuSerializer(get_category_queryset(), many=True)
     return serializer.data
 
             

@@ -1,42 +1,27 @@
-from api.v1.product.models import Category
-import requests, json
-from django.db import transaction
 
+from api.v1.product.models import Category
+import requests
+import time
 
 url = 'https://api.uzum.uz/api/main/root-categories?eco=false'
-
 headers = {
-    "authorization": "Basic YjJjLWZyb250OmNsaWVudFNlY3JldA=="
+    "authorization": "Basic YjJjLWZyb250OmNsaWVudFNlY3JldA==",
 }
+
+
 res = requests.get(url=url, headers=headers)
-res_json = json.loads(res.content)['payload']
+res.raise_for_status()
+res_json = res.json()['payload']
 
-def save_categories():
-    categories_list = []
+
+def save_categories(res_json, parent_id=None):
     for r_json in res_json:
-        obj = Category(title_uz=r_json['title'])
-        obj.save()
-        # categories_list.append(
-        #     obj
-        # )
+        category = Category(title_uz=r_json['title'], parent_id=parent_id)
+        category.save()
+        time.sleep(3)
         if r_json.get("children"):
-            for r_child in r_json['children']:
-                obj_child = Category(title_uz=r_child['title'], parent=obj)
-                obj_child.save()
-                # categories_list.append(
-                #     obj_child
-                # )
-                if r_child.get("children"):
-                    for r_child_child in r_child['children']:
-                        obj_ch = Category(title_uz=r_child_child['title'], parent=obj_child)
-                        obj_ch.save()
-                        # categories_list.append(
-                        # )
-    # with transaction.atomic():
-    #     Category.objects.bulk_create(categories_list)
-
-# res_paython = json.dumps(res_json, indent=4)
+            save_categories(r_json.get("children"), category.id)
 
 
-# with open('categories.json', 'w') as file:
-    # file.write(f"{res_paython}")
+def start():
+    save_categories(res_json, parent_id=None)

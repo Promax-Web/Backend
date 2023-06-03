@@ -7,7 +7,7 @@ from api.utilis.custom_responses import (
     lang_not_found,
     exception_error_response
 )
-from main import save_categories
+from main import start
 
 
 from .list_queries import get_list_categories
