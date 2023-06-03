@@ -164,3 +164,5 @@ media/
 migrations/
 Pipfile
 Pipfile.lock
+static/
+staticfiles/
