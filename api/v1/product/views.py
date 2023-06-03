@@ -40,22 +40,3 @@ class CategoryView(APIView):
             case 'id.category':
                 pass
 
-
-
-    def put(self, requests, pk, *args, **kwargs):
-        data = requests.data
-        category = Category.objects.filter(pk=pk).first()
-        if not category:
-            return Response({'error': 'bu pkda category topilmadi'})
-        serializer = self.get_serializer(data=data, instance=category, partial=True)
-        serializer.is_valid(raise_exception=True)
-        root = serializer.save()
-        return Response(category_format(root))
-
-    def delete(self, pk, *args, **kwargs):
-        try:
-            category = Category.objects.get(pk=pk).delete()
-            result = {"resultat": f"categoriya {pk} id o'chirildi"}
-        except:
-            result = {"resultat": f"{pk}da categoriya topilmadi"}
-        return Response(result)
