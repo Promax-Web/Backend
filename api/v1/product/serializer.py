@@ -3,30 +3,35 @@ from django.core.cache import cache
 from .models import Category
 
 
-class CategoryUzSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
-    title = serializers.CharField(source='title_uz', allow_blank=True, default='')
-    description = serializers.CharField(source='description_uz', allow_blank=True, default='')
+    title = serializers.CharField(allow_blank=True, default='')
+    description = serializers.CharField(allow_blank=True, default='')
+
+    def __init__(self, *args, **kwargs):
+        context = kwargs.pop('context', {})
+        super().__init__(*args, **kwargs)
+        self.context.update(context)
 
     class Meta:
         model = Category
         fields = ("id", 'icon', 'icon_svg', 'title', 'description', 'children')
 
     def get_children(self, obj):
-        serializer = self.__class__(obj.children.all(), many=True)
+        serializer = self.__class__(obj.children.all(), many=True, context=self.context)
         return serializer.data
-
     
-class CategoryRuSerializer(serializers.ModelSerializer):
-    children = serializers.SerializerMethodField()
-    title = serializers.CharField(source='title_ru', allow_blank=True, default='')
-    description = serializers.CharField(source='description_ru', allow_blank=True, default='')
-
-    class Meta:
-        model = Category
-        fields = ("id", 'icon', 'icon_svg', 'title', 'description', 'children')
-
-    def get_children(self, obj):
-        serializer = self.__class__(obj.children.all(), many=True)
-        return serializer.data
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+        if self.context['lang'] == 'uz':
+            res.update({
+                'title': instance.title_uz,
+                'description': instance.description_uz,
+            })
+        else:
+            res.update({
+                'title': instance.title_ru,
+                'description': instance.description_ru,
+            })
+        return res
 

@@ -30,9 +30,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.first_name
-
-    def email_user(self, subject, message, from_phone=None, **kwargs):
-        send_mail(subject, message, from_phone, [self.phone], **kwargs)
+    
+    def __str__(self):
+        return self.phone
 
 
 class OTP(models.Model):
