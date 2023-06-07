@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.core.cache import cache
-from .models import Category
+from .models import Category, Product
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -35,3 +35,32 @@ class CategorySerializer(serializers.ModelSerializer):
             })
         return res
 
+
+class ProductSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(allow_blank=True, default='')
+    description = serializers.CharField(allow_blank=True, default='')
+
+    def __init__(self, *args, **kwargs):
+        context = kwargs.pop('context', {})
+        super().__init__(*args, **kwargs)
+        self.context.update(context)
+
+
+    class Meta:
+        model = Product
+        fields = ('id', 'title', 'description', 'attributes', 'category')
+
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+        if self.context['lang'] == 'uz':
+            res.update({
+                'title': instance.title_uz,
+                'description': instance.description_uz,
+            })
+        else:
+            res.update({
+                'title': instance.title_ru,
+                'description': instance.description_ru,
+            })
+        res['category'] = CategorySerializer(instance.category, context={'lang': self.context['lang']}).data
+        return res

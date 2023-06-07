@@ -18,6 +18,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     title_uz = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
     description_uz = models.TextField(blank=True, null=True)
@@ -27,10 +28,14 @@ class Product(models.Model):
     def str(self) -> str:
         return self.title
 
+    def __str__(self):
+        return self.title_uz
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
     imgage = models.ImageField(upload_to='product/images/')
+
 
 
 class Characteristic(models.Model):

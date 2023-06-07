@@ -12,3 +12,5 @@ def code_decoder(code, decode=False):
 
 def generate_key(cls):
     return binascii.hexlify(os.urandom(cls)).decode()
+
+
