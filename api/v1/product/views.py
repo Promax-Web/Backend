@@ -64,3 +64,17 @@ class ProductApi(APIView):
                     "res": self.serializer_class(query, many=True, context={"lang": lang}).data,
                     'meta': meta
                 })
+            case 'category.product':
+                category_id = params.get('category_id')
+                list_categories = get_list_categories(lang, category_id)
+                page = int(request.GET.get('page', 1))
+                limit = 20  # settings.PER_PAGE
+                offset = (page - 1) * limit
+                query = Product.objects.filter(category_id=category_id)
+                pagination = Paginator(request, page=page, per_page=limit, count=len(query))
+                meta = pagination.get_paginated_response()
+                query = query[offset:offset + limit]
+                return Response({
+                    "res": self.serializer_class(query, many=True, context={"lang": lang}).data,
+                    'meta': meta,
+                })
