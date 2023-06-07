@@ -11,21 +11,19 @@ from api.utilis.custom_responses import (
 )
 from .list_queries import get_list_categories
 from .models import Product
-from .serializer import ProductSerializer
+from .serializer import ProductSerializer, ProductDetailSerializer
+from ...utilis.helper import custom_paginator
 from ...utilis.paginator import Paginator
 
 
 class CategoryView(CustomBaseApi):
     def get(self, request):
-        request_data = request.data
-        user = request.user
         params = request.query_params
         method = params.get("method")
         lang = params.get("lang", "uz")
         match method:
             case 'list.category':
                 category_id = params.get("category_id")
-
                 try:
                     list_categories = get_list_categories(lang, category_id)
                 except Exception as e:
@@ -40,41 +38,39 @@ class CategoryView(CustomBaseApi):
         return self.method_not_found_response()
 
 
-
-
 class ProductApi(APIView):
     serializer_class = ProductSerializer
+    detail_serializer_class = ProductDetailSerializer
 
     def get(self, request, *args, **kwargs):
-        request_data = request.data
-        user = request.user
         params = request.query_params
         method = params.get("method")
         lang = params.get("lang", "uz")
+        page = int(request.GET.get('page', 1))
+        category_id = params.get('category_id')
+        product_id = params.get('product_id')
         match method:
             case 'list.product':
-                page = int(request.GET.get('page', 1))
-                limit = 20  # settings.PER_PAGE
-                offset = (page - 1) * limit
                 query = Product.objects.all()
-                pagination = Paginator(request, page=page, per_page=limit, count=len(query))
-                meta = pagination.get_paginated_response()
-                query = query[offset:offset+limit]
+                pagination_res = custom_paginator(request, query, page)
                 return Response({
-                    "res": self.serializer_class(query, many=True, context={"lang": lang}).data,
-                    'meta': meta
+                    "status": True,
+                    "data": self.serializer_class(pagination_res['queryset'], many=True, context={"lang": lang}).data,
+                    'meta': pagination_res['meta']
                 })
+
             case 'category.product':
-                category_id = params.get('category_id')
-                list_categories = get_list_categories(lang, category_id)
-                page = int(request.GET.get('page', 1))
-                limit = 20  # settings.PER_PAGE
-                offset = (page - 1) * limit
                 query = Product.objects.filter(category_id=category_id)
-                pagination = Paginator(request, page=page, per_page=limit, count=len(query))
-                meta = pagination.get_paginated_response()
-                query = query[offset:offset + limit]
+                pagination_res = custom_paginator(request, query, page)
+
                 return Response({
-                    "res": self.serializer_class(query, many=True, context={"lang": lang}).data,
-                    'meta': meta,
+                    "status": True,
+                    "data": self.serializer_class(pagination_res['queryset'], many=True, context={"lang": lang}).data,
+                    'meta': pagination_res['meta'],
+                })
+            case 'detail.product':
+                product = Product.objects.filter(id=product_id).first()
+                return Response({
+                    "status": True,
+                    "data": self.detail_serializer_class(product, context={"lang": lang}).data,
                 })

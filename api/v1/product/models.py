@@ -18,6 +18,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    price = models.PositiveIntegerField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     title_uz = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
@@ -34,8 +35,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
-    imgage = models.ImageField(upload_to='product/images/')
-
+    image = models.ImageField(upload_to='product/images/')
 
 
 class Characteristic(models.Model):
