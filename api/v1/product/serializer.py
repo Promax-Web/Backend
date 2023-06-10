@@ -23,15 +23,12 @@ class CategorySerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         res = super().to_representation(instance)
-        if self.context['lang'] == 'uz':
-            res.update({
-                'title': instance.title_uz,
-                'description': instance.description_uz,
-            })
-        else:
-            res.update({
-                'title': instance.title_ru,
-                'description': instance.description_ru,
-            })
+        lang = self.context['lang']
+        title_key = 'title_uz' if lang == 'uz' else 'title_ru'
+        description_key = 'description_uz' if lang == 'uz' else 'description_ru'
+        res.update({
+            'title': getattr(instance, title_key),
+            'description': getattr(instance, description_key),
+        })
         return res
 

@@ -10,14 +10,12 @@ from .list_queries import get_list_categories
 class CategoryView(CustomBaseApi):
 
     def get(self, request):
-        request_data = request.data
-        user = request.user
         params = request.query_params
         method = params.get("method")
         lang = params.get("lang", "uz")
         match method:
             case 'list.category':
-                category_id = params.get("category_id")
+                category_id = params.get("category_id", None)
                 try:
                     list_categories = get_list_categories(lang, category_id)
                 except Exception as e:
