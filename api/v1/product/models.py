@@ -18,14 +18,19 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     title_uz = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
     description_uz = models.TextField(blank=True, null=True)
     description_ru = models.TextField(blank=True, null=True)
-    attributes = models.JSONField(blank=True, null=True, default=dict)
+    attributes_uz = models.JSONField(blank=True, null=True, default=dict)
+    attributes_ru = models.JSONField(blank=True, null=True, default=dict)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def str(self) -> str:
-        return self.title
+        return self.title_uz
 
 
 class ProductImage(models.Model):
@@ -35,6 +40,7 @@ class ProductImage(models.Model):
 
 class Characteristic(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     title_uz = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
 
@@ -42,11 +48,7 @@ class Characteristic(models.Model):
         return f"{self.product.title_uz} - {self.title_uz}"
 
 
-class CharacteristicItem(models.Model):
-    characteristic = models.ForeignKey(Characteristic, on_delete=models.SET_NULL, null=True)
-    title_uz = models.CharField(max_length=255)
-    title_ru = models.CharField(max_length=255)
-    value = models.CharField(max_length=255)
-
-    def str(self) -> str:
-        return self.title
+class ProductPrice(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    price = models.PositiveBigIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
