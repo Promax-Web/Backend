@@ -39,7 +39,6 @@ class CategoryView(CustomBaseApi):
 
 
 class ProductApi(APIView):
-
     serializer_class = ProductSerialiser
     detail_serializer_class = ProductDetailSerializer
 
