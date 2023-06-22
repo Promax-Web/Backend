@@ -3,9 +3,6 @@ from django.db import models
 from Backend.api.v1.product.models import Product
 
 
-# Create your models here.
-
-
 class Order(models.Model):
     phone = models.CharField(max_length=15)
     first_name = models.CharField(max_length=100)
