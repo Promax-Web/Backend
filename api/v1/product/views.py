@@ -10,10 +10,10 @@ from api.utilis.custom_responses import (
     exception_error_response
 )
 from .models import Product
-from .serializer import ProductSerializer, ProductDetailSerializer
+from .serializer import ProductDetailSerializer,ProductSerialiser
 from ...utilis.helper import custom_paginator
-from .list_queries import get_list_categories, get_list_products
-
+from .list_queries import get_list_categories
+from django.db.models import Q
 
 
 class CategoryView(CustomBaseApi):
@@ -40,7 +40,7 @@ class CategoryView(CustomBaseApi):
 
 class ProductApi(APIView):
 
-    serializer_class = ProductSerializer
+    serializer_class = ProductSerialiser
     detail_serializer_class = ProductDetailSerializer
 
     def get(self, request, *args, **kwargs):
@@ -48,7 +48,7 @@ class ProductApi(APIView):
         method = params.get("method")
         lang = params.get("lang", "uz")
         page = int(request.GET.get('page', 1))
-        category_id = params.get('category_id')
+        category = params.get('category')
         product_id = params.get('product_id')
         match method:
             case 'list.product':
@@ -57,17 +57,18 @@ class ProductApi(APIView):
                 return Response({
                     "status": True,
                     "data": self.serializer_class(pagination_res['queryset'], many=True, context={"lang": lang}).data,
-                    'meta': pagination_res['meta']
+                    'pagination': pagination_res['meta']
                 })
 
             case 'category.product':
-                query = Product.objects.filter(category_id=category_id)
+                query = Product.objects.filter(
+                    Q(category__subTitle_uz=category) | Q(category__subTitle_ru=category)
+                )
                 pagination_res = custom_paginator(request, query, page)
-
                 return Response({
                     "status": True,
                     "data": self.serializer_class(pagination_res['queryset'], many=True, context={"lang": lang}).data,
-                    'meta': pagination_res['meta'],
+                    'pagination': pagination_res['meta'],
                 })
             case 'detail.product':
                 product = Product.objects.filter(id=product_id).first()

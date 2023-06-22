@@ -17,7 +17,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategorAdmin(admin.ModelAdmin):
-    list_display = ("id", 'title_uz', "title_ru", "parent")
+    list_display = ("id", 'title_uz', "title_ru", "parent", 'subTitle_uz')
 
 @admin.register(ProductPrice)
 class ProductPriceAdmin(admin.ModelAdmin):
