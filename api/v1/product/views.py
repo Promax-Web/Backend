@@ -9,11 +9,11 @@ from api.utilis.base_api_class import CustomBaseApi
 from api.utilis.custom_responses import (
     exception_error_response
 )
-from .list_queries import get_list_categories
 from .models import Product
 from .serializer import ProductSerializer, ProductDetailSerializer
 from ...utilis.helper import custom_paginator
-from ...utilis.paginator import Paginator
+from .list_queries import get_list_categories, get_list_products
+
 
 
 class CategoryView(CustomBaseApi):
@@ -23,9 +23,9 @@ class CategoryView(CustomBaseApi):
         lang = params.get("lang", "uz")
         match method:
             case 'list.category':
-                category_id = params.get("category_id")
+                category = params.get("category", None)
                 try:
-                    list_categories = get_list_categories(lang, category_id)
+                    list_categories = get_list_categories(lang, category)
                 except Exception as e:
                     return Response(exception_error_response(e))
                 else:
@@ -39,6 +39,7 @@ class CategoryView(CustomBaseApi):
 
 
 class ProductApi(APIView):
+
     serializer_class = ProductSerializer
     detail_serializer_class = ProductDetailSerializer
 
@@ -74,3 +75,4 @@ class ProductApi(APIView):
                     "status": True,
                     "data": self.detail_serializer_class(product, context={"lang": lang}).data,
                 })
+

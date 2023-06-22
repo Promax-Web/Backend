@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from django.core.cache import cache
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, ProductPrice
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -23,21 +23,18 @@ class CategorySerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         res = super().to_representation(instance)
-        if self.context['lang'] == 'uz':
-            res.update({
-                'title': instance.title_uz,
-                'description': instance.description_uz,
-            })
-        else:
-            res.update({
-                'title': instance.title_ru,
-                'description': instance.description_ru,
-            })
+        lang = self.context['lang']
+        title_key = 'title_uz' if lang == 'uz' else 'title_ru'
+        description_key = 'description_uz' if lang == 'uz' else 'description_ru'
+        res.update({
+            'title': getattr(instance, title_key),
+            'description': getattr(instance, description_key),
+        })
         return res
 
-
-class ProductSerializer(serializers.ModelSerializer):
+class ProductCategoryFilterSerializer(serializers.ModelSerializer):
     title = serializers.CharField(allow_blank=True, default='')
+    price = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -104,4 +101,25 @@ class ProductDetailSerializer(serializers.ModelSerializer):
                 'description': instance.description_ru,
             })
         res['category'] = CategorySerializer(instance.category, context={'lang': self.context['lang']}).data
-        return res
+
+
+    def get_price(self, obj):
+        price = ProductPrice.objects.filter(product_id=obj.id).last()
+        return price.price
+
+    def get_image(self, obj):
+        image = ProductImage.objects.filter(product_id=obj.id).last().imgage
+        return image.url
+    
+    # def to_representation(self, instance):
+    #     res = super().to_representation(instance)
+    #     lang = self.context['lang']
+    #
+    #     title_key = 'title_uz' if lang == 'uz' else 'title_ru'
+    #     if hasattr(instance, title_key):
+    #         res['title'] = getattr(instance, title_key)
+    #     res['category'] = {
+    #         "id": instance.category.id,
+    #         "title": instance.category.title_uz if lang == 'uz' else instance.category.title_ru,
+    #     }
+    #     return res

@@ -3,6 +3,6 @@ from .views import ProductApi, CategoryView
 
 
 urlpatterns = [
-    path('', ProductApi.as_view()),
-    path('category/', CategoryView.as_view())
+    path("", ProductApi.as_view()),
+    path("categories/", CategoryView.as_view()),
 ]
