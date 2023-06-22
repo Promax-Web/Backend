@@ -9,15 +9,25 @@ class Category(models.Model):
     title_ru = models.CharField(max_length=255)
     description_uz = models.CharField(max_length=300, blank=True, null=True)
     description_ru = models.CharField(max_length=300, blank=True, null=True)
+    subTitle_uz = models.CharField(max_length=300, null=True, blank=True)
+    subTitle_ru = models.CharField(max_length=300, null=True, blank=True)
 
-    def str(self) -> str:
-        return self.title
+    def __str__(self):
+        return self.title_uz
 
     class Meta:
         verbose_name_plural = 'Categories'
 
+    def save(self, *args, **kwargs):
+        if self.title_uz:
+            self.subTitle_uz = self.title_uz.replace(" ", "_")
+        if self.title_ru:
+            self.subTitle_ru = self.title_ru.replace(" ", "_")
+        super().save(*args, **kwargs)
+
 
 class Product(models.Model):
+    price = models.PositiveIntegerField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     title_uz = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
@@ -25,17 +35,17 @@ class Product(models.Model):
     description_ru = models.TextField(blank=True, null=True)
     attributes_uz = models.JSONField(blank=True, null=True, default=dict)
     attributes_ru = models.JSONField(blank=True, null=True, default=dict)
-
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
 
-    def str(self) -> str:
+
+    def __str__(self):
         return self.title_uz
 
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
-    imgage = models.ImageField(upload_to='product/images/')
+    image = models.ImageField(upload_to='product/images/')
 
 
 class Characteristic(models.Model):
