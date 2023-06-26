@@ -157,6 +157,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'category': getattr(instance, category_key),
         })
         return res
+<<<<<<< HEAD
 
 
 class CertificateProductSerializer(serializers.ModelSerializer):
@@ -207,3 +208,5 @@ class ColoringSerializer(serializers.ModelSerializer):
             'title': getattr(instance, title_key),
         })
         return res
+=======
+>>>>>>> fc36fa6 (..)
