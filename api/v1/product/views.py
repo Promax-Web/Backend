@@ -62,7 +62,7 @@ class ProductApi(APIView):
             case 'category.product':
                 query = Product.objects.filter(
                     Q(category__subTitle_uz=category) | Q(category__subTitle_ru=category)
-                )
+                ).annotate()
                 pagination_res = custom_paginator(request, query, page)
                 return Response({
                     "status": True,
