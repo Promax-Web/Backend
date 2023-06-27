@@ -9,8 +9,8 @@ from api.utilis.base_api_class import CustomBaseApi
 from api.utilis.custom_responses import (
     exception_error_response
 )
-from .models import Product
-from .serializer import ProductDetailSerializer,ProductSerialiser
+from .models import Product, Coloring
+from .serializer import ProductDetailSerializer, ProductSerializer, CertificateProductSerializer, ColoringSerializer
 from ...utilis.helper import custom_paginator
 from .list_queries import get_list_categories
 from django.db.models import Q
@@ -39,8 +39,7 @@ class CategoryView(CustomBaseApi):
 
 
 class ProductApi(APIView):
-
-    serializer_class = ProductSerialiser
+    serializer_class = ProductSerializer
     detail_serializer_class = ProductDetailSerializer
 
     def get(self, request, *args, **kwargs):
@@ -77,3 +76,29 @@ class ProductApi(APIView):
                     "data": self.detail_serializer_class(product, context={"lang": lang}).data,
                 })
 
+
+class CertificateApi(APIView):
+    serializer_class = CertificateProductSerializer
+
+    def get(self, request, *args, **kwargs):
+        params = request.query_params
+        lang = params.get("lang", "uz")
+        product = Product.objects.all()
+        return Response({
+            'status': True,
+            'data': CertificateProductSerializer(product, many=True, context={'lang': lang}).data
+        })
+
+
+class ColoringApi(APIView):
+    serializer_class = ColoringSerializer
+
+    def get(self, request, *args, **kwargs):
+        params = request.query_params
+        lang = params.get("lang", "uz")
+        coloring = Coloring.objects.all()
+
+        return Response({
+            'status': True,
+            'data': ColoringSerializer(coloring, many=True, context={'lang': lang}).data
+        })

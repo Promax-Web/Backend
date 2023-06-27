@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Product, ProductImage, ProductPrice, Characteristic
+from .models import Category, Product, ProductImage, ProductPrice, Characteristic, Coloring
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -15,12 +15,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("id", 'icon', 'icon_svg', 'title', 'description', 'children')
+        fields = ("id", 'icon', 'icon_svg', 'title', 'description', 'children', 'subTitle')
 
     def get_children(self, obj):
         serializer = self.__class__(obj.children.all(), many=True, context=self.context)
         return serializer.data
-    
+
     def to_representation(self, instance):
         res = super().to_representation(instance)
         lang = self.context['lang']
@@ -30,7 +30,7 @@ class CategorySerializer(serializers.ModelSerializer):
         res.update({
             'title': getattr(instance, title_key),
             'description': getattr(instance, description_key),
-            'subTitle': getattr(instance,subTitle_key)
+            'subTitle': getattr(instance, subTitle_key)
         })
         return res
 
@@ -68,7 +68,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
     def get_characteristic(self, obj):
         characteristic = Characteristic.objects.filter(product_id=obj.id)
-        return CharacteristicSerialisez(characteristic, many=True, context={
+        return CharacteristicSerializer(characteristic, many=True, context={
             'lang': self.context['lang']
         }).data
 
@@ -96,17 +96,13 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         return res
 
 
-
-
-class CharacteristicSerialisez(serializers.ModelSerializer):
-
+class CharacteristicSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
     title = serializers.CharField(allow_blank=True, default='')
 
     class Meta:
         model = Characteristic
         fields = ('id', 'children', 'title')
-
 
     def __init__(self, *args, **kwargs):
         context = kwargs.pop('context', {})
@@ -128,7 +124,7 @@ class CharacteristicSerialisez(serializers.ModelSerializer):
         return res
 
 
-class ProductSerialiser(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     title = serializers.CharField(allow_blank=True, default='')
     image = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
@@ -158,5 +154,55 @@ class ProductSerialiser(serializers.ModelSerializer):
         res.update({
             'title': getattr(instance, title_key),
             'category': getattr(instance, category_key),
+        })
+        return res
+
+
+class CertificateProductSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(allow_blank=True, default='')
+
+    class Meta:
+        model = Product
+        fields = ('id', 'title', 'tex_specific', 'passport_safe_boolean', 'passport_safe_file',
+                  'sgp', 'certificate_canceled', 'free_certificate',
+                  'free_certificate', 'fire_certificate', 'canceled_text',
+                  'class_danger', 'sez', 'climate_test'
+                  )
+    def __init__(self, *args, **kwargs):
+        context = kwargs.pop('context', {})
+        super().__init__(*args, **kwargs)
+        self.context.update(context)
+
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+        lang = self.context['lang']
+        title_key = 'title_uz' if lang == 'uz' else 'title_ru'
+
+        res.update({
+            'title': getattr(instance, title_key),
+        })
+        return res
+
+
+class ColoringSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(allow_blank=True, default='')
+
+    class Meta:
+        model = Coloring
+        fields = ('id', 'title', 'image', 'url')
+
+
+    def __init__(self, *args, **kwargs):
+        context = kwargs.pop('context', {})
+        super().__init__(*args, **kwargs)
+        self.context.update(context)
+
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+        lang = self.context['lang']
+        title_key = 'title_uz' if lang == 'uz' else 'title_ru'
+
+        res.update({
+            'title': getattr(instance, title_key),
         })
         return res

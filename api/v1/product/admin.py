@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ProductImage, Product, Category, ProductPrice
+from .models import ProductImage, Product, Category, ProductPrice, Coloring
 
 
 # Register your models here.
@@ -17,11 +17,16 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategorAdmin(admin.ModelAdmin):
-    list_display = ("id", 'title_uz', "title_ru", "parent", 'subTitle_uz')
+    list_display = ("id", 'title_uz', "title_uz", "parent", 'subTitle_uz')
 
 @admin.register(ProductPrice)
 class ProductPriceAdmin(admin.ModelAdmin):
     list_display = ("id", 'product', "price", "created_at")
+
+
+@admin.register(Coloring)
+class ColoringAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title_uz', 'url')
 
 admin.site.register(Product, ProductAdmin)
 # admin.site.register(Category)

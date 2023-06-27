@@ -1,5 +1,5 @@
 from .models import Category, Product
-from .serializer import CategorySerializer, ProductSerialiser
+from .serializer import CategorySerializer, ProductSerializer
 from django.core.cache import cache
 from django.db.models import Q
 
@@ -33,6 +33,6 @@ def get_list_products(lang, category=None, product_id=None):
         )
     elif product_id:
         query = get_product_queryset().filter(id=product_id).first()
-    serializer = ProductSerialiser(query, many=True, context={'lang': lang})
+    serializer = ProductSerializer(query, many=True, context={'lang': lang})
     return serializer.data
 
