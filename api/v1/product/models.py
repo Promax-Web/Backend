@@ -50,7 +50,7 @@ class ProductImage(models.Model):
 
 class Characteristic(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="children")
     title_uz = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
 
