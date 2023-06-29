@@ -39,7 +39,7 @@ class CategoryView(CustomBaseApi):
 
 
 class ProductApi(APIView):
-    serializer_class = ProductSerializer
+    serializer_class = ProductSerialiser
     detail_serializer_class = ProductDetailSerializer
 
     def get(self, request, *args, **kwargs):
@@ -62,7 +62,7 @@ class ProductApi(APIView):
             case 'category.product':
                 query = Product.objects.filter(
                     Q(category__subTitle_uz=category) | Q(category__subTitle_ru=category)
-                )
+                ).annotate()
                 pagination_res = custom_paginator(request, query, page)
                 return Response({
                     "status": True,
