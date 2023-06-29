@@ -39,7 +39,7 @@ class CategoryView(CustomBaseApi):
 
 
 class ProductApi(APIView):
-    serializer_class = ProductSerialiser
+    serializer_class = ProductSerializer
     detail_serializer_class = ProductDetailSerializer
 
     def get(self, request, *args, **kwargs):
