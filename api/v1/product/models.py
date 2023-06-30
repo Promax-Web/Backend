@@ -72,7 +72,6 @@ class ProductPrice(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     price = models.PositiveBigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-<<<<<<< HEAD
 
 
 class Coloring(models.Model):
@@ -80,5 +79,3 @@ class Coloring(models.Model):
     title_ru = models.CharField(max_length=255)
     url = models.URLField()
     image = models.ImageField()
-=======
->>>>>>> 70456ec (Sourcing patch)
