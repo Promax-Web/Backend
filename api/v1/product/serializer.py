@@ -68,7 +68,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
     def get_characteristic(self, obj):
         characteristic = Characteristic.objects.filter(product_id=obj.id, parent__isnull=True)
-        return CharacteristicSerialisez(characteristic, many=True, context={
+        return CharacteristicSerializer(characteristic, many=True, context={
 
             'lang': self.context['lang']
         }).data

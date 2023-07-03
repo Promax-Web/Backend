@@ -1,16 +1,16 @@
-from collections import OrderedDict
-
-from django.conf import settings
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from rest_framework.utils.urls import replace_query_param
 from rest_framework.views import APIView
 from api.utilis.base_api_class import CustomBaseApi
 from api.utilis.custom_responses import (
     exception_error_response
 )
 from .models import Product, Coloring
-from .serializer import ProductDetailSerializer, ProductSerializer, CertificateProductSerializer, ColoringSerializer
+from .serializer import (
+    ProductDetailSerializer,
+    ProductSerializer,
+    CertificateProductSerializer,
+    ColoringSerializer
+)
 from ...utilis.helper import custom_paginator
 from .list_queries import get_list_categories
 from django.db.models import Q
@@ -39,7 +39,7 @@ class CategoryView(CustomBaseApi):
 
 
 class ProductApi(APIView):
-    serializer_class = ProductSerialiser
+    serializer_class = ProductSerializer
     detail_serializer_class = ProductDetailSerializer
 
     def get(self, request, *args, **kwargs):
