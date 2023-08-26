@@ -129,10 +129,11 @@ class ProductSerializer(serializers.ModelSerializer):
     title = serializers.CharField(allow_blank=True, default='')
     image = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
+    description = serializers.CharField(allow_blank=True, default='')
 
     class Meta:
         model = Product
-        fields = ('id', 'price', 'category', 'title', 'image')
+        fields = ('id', 'price', 'category', 'title', 'image', 'description')
 
     def __init__(self, *args, **kwargs):
         context = kwargs.pop('context', {})
@@ -152,9 +153,11 @@ class ProductSerializer(serializers.ModelSerializer):
         lang = self.context['lang']
         title_key = 'title_uz' if lang == 'uz' else 'title_ru'
         category_key = 'title_uz' if lang == 'uz' else 'title_ru'
+        description_key = 'description_uz' if lang == 'uz' else 'description_ru'
         res.update({
             'title': getattr(instance, title_key),
             'category': getattr(instance, category_key),
+            'description': getattr(instance, description_key)
         })
         return res
 

@@ -48,6 +48,7 @@ class Product(models.Model):
     class_danger = models.PositiveIntegerField(null=True, blank=True)
     sez = models.FileField(null=True, blank=True)
     climate_test = models.FileField(null=True, blank=True)
+    image = models.ImageField(upload_to='product/images/', blank=True, null=True)
 
     def __str__(self):
         return self.title_uz
